@@ -1,11 +1,16 @@
-/*YOUR CODE HERE*/
+PlayersList = new Mongo.Collection('players');
+PlayersList.schema = new SimpleSchema({
+  name: {type: String},
+  score: {type: Number, defaultValue: 0},
+  createdBy: {type: String}
+});
 
 if(Meteor.isClient){
     Template.leaderboard.helpers({
         'player': function(){
             var currentUserId = Meteor.userId();
-            /*YOUR CODE HERE*/
-
+            return PlayersList.find({ createdBy: currentUserId },
+                                    { sort: {score: -1, name: 1} });
         },
         'selectedClass': function(){
             var playerId = this._id;
@@ -16,8 +21,7 @@ if(Meteor.isClient){
         },
         'selectedPlayer': function(){
             var selectedPlayer = Session.get('selectedPlayer');
-            /*YOUR CODE HERE*/
-
+            return PlayersList.findOne({ _id: selectedPlayer });
         }
     });
     Template.leaderboard.events({
@@ -54,7 +58,7 @@ if(Meteor.isClient){
 if(Meteor.isServer){
     Meteor.publish('thePlayers', function(){
         var currentUserId = this.userId;
-        /*YOUR CODE HERE*/
+        return PlayersList.find({ createdBy: currentUserId });
     });
 }
 
@@ -63,14 +67,18 @@ Meteor.methods({
         check(playerNameVar, String);
         var currentUserId = Meteor.userId();
         if(currentUserId){
-            /*YOUR CODE HERE*/
+            PlayersList.insert({
+                name: playerNameVar,
+                score: 0,
+                createdBy: currentUserId
+            });
         }
     },
     'removePlayer': function(selectedPlayer){
         check(selectedPlayer, String);
         var currentUserId = Meteor.userId();
         if(currentUserId){
-            /*YOUR CODE HERE*/
+            PlayersList.remove({ _id: selectedPlayer, createdBy: currentUserId });
         }
     },
     'updateScore': function(selectedPlayer, scoreValue){
@@ -78,7 +86,8 @@ Meteor.methods({
         check(scoreValue, Number);
         var currentUserId = Meteor.userId();
         if(currentUserId){
-            /*YOUR CODE HERE*/
+            PlayersList.update( { _id: selectedPlayer, createdBy: currentUserId },
+                                { $inc: {score: scoreValue} });
         }
     }
 });
