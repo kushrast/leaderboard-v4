@@ -1,11 +1,11 @@
-PlayersList = new Mongo.Collection('players');
+/*YOUR CODE HERE*/
 
 if(Meteor.isClient){
     Template.leaderboard.helpers({
         'player': function(){
             var currentUserId = Meteor.userId();
-            return PlayersList.find({ createdBy: currentUserId },
-                                    { sort: {score: -1, name: 1} });
+            /*YOUR CODE HERE*/
+
         },
         'selectedClass': function(){
             var playerId = this._id;
@@ -16,7 +16,8 @@ if(Meteor.isClient){
         },
         'selectedPlayer': function(){
             var selectedPlayer = Session.get('selectedPlayer');
-            return PlayersList.findOne({ _id: selectedPlayer });
+            /*YOUR CODE HERE*/
+
         }
     });
     Template.leaderboard.events({
@@ -53,7 +54,7 @@ if(Meteor.isClient){
 if(Meteor.isServer){
     Meteor.publish('thePlayers', function(){
         var currentUserId = this.userId;
-        return PlayersList.find({ createdBy: currentUserId });
+        /*YOUR CODE HERE*/
     });
 }
 
@@ -62,18 +63,14 @@ Meteor.methods({
         check(playerNameVar, String);
         var currentUserId = Meteor.userId();
         if(currentUserId){
-            PlayersList.insert({
-                name: playerNameVar,
-                score: 0,
-                createdBy: currentUserId
-            });
+            /*YOUR CODE HERE*/
         }
     },
     'removePlayer': function(selectedPlayer){
         check(selectedPlayer, String);
         var currentUserId = Meteor.userId();
         if(currentUserId){
-            PlayersList.remove({ _id: selectedPlayer, createdBy: currentUserId });
+            /*YOUR CODE HERE*/
         }
     },
     'updateScore': function(selectedPlayer, scoreValue){
@@ -81,8 +78,7 @@ Meteor.methods({
         check(scoreValue, Number);
         var currentUserId = Meteor.userId();
         if(currentUserId){
-            PlayersList.update( { _id: selectedPlayer, createdBy: currentUserId },
-                                { $inc: {score: scoreValue} });
+            /*YOUR CODE HERE*/
         }
     }
 });
